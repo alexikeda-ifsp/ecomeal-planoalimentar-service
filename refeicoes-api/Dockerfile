@@ -3,11 +3,11 @@ FROM python:3.13.6
 WORKDIR /app
 
 # Copia os requisitos e instala
-COPY ./requirements.txt .
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ecomeal-planoalimentar-service/refeicoes-api/ .
+COPY . .
 
 # Expõe a porta que o FastAPI vai usar
 EXPOSE 8003
