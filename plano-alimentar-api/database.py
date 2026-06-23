@@ -1,16 +1,41 @@
-def select_operation(client,table,id_paciente=None):
-    """
-    Faz a operação de SELECT no Banco de Dados, passando uma query e retornando um registro Lista
-    de Dicionários.
-    """
+from psycopg2.extras import RealDictCursor
+
+
+def select_operation(connection, table, id=None):
+
     if table is None:
         raise Exception("Tabela não encontrada.")
-    if id_paciente is not None:
-        paciente = client.table(table).select("*").eq("id", id_paciente).execute()
-        return paciente.data
-    pacientes = client.table(table).select("*").execute()
-    return pacientes.data
 
-    
+    cursor = connection.cursor(
+        cursor_factory=RealDictCursor
+    )
+
+    if id:
+
+        cursor.execute(
+            f"""
+            SELECT *
+            FROM {table}
+            WHERE id = %s
+            """,
+            (id,)
+        )
+
+        result = cursor.fetchone()
+
+    else:
+
+        cursor.execute(
+            f"""
+            SELECT *
+            FROM {table}
+            """
+        )
+
+        result = cursor.fetchall()
 
 
+    cursor.close()
+    connection.close()
+
+    return result
